@@ -17,3 +17,4 @@ const (
 )
 ```
 
+app is running on [http://localhost:8080/assets/](http://localhost:8080/assets/ "link to wallet")
