@@ -8,7 +8,6 @@ import (
 
 // Transaction : Plain Old Transaction
 type Transaction struct {
-	//AssetAddress string `json:"asset"`
 	Destination string `json:"destination"`
 	Amount string `json:"amount"`
 	AssetType string `json:"type"`
@@ -23,7 +22,6 @@ type Account struct {
 var Transactions []Transaction
 
 func getAccountInfoHandler(w http.ResponseWriter, r *http.Request) {
-	//Convert the "Transactions" variable to json
 	neoValue, gasValue := getInfo();
 	account := Account{neoValue, gasValue}
 	AccountBytes, err := json.Marshal(account)
@@ -47,7 +45,6 @@ func transferHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Transaction.AssetAddress = r.Form.Get("asset")
 	Transaction.Destination = r.Form.Get("destination")
 	Transaction.Amount = r.Form.Get("amount")
 	Transaction.AssetType = r.Form.Get("type")

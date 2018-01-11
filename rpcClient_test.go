@@ -5,6 +5,7 @@ import (
 )
 
 func TestGetInfo(t *testing.T) {
+	//check actual amounts before
 	expected1 := "109"
 	expected2 := "957"
 
