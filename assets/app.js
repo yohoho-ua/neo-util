@@ -5,7 +5,7 @@ new Vue ({
     },
     data: {
     birds: [],
-    address: 'AHcwixWbxYbfPirmFXA7dX13bu6Po75UCV',
+    address: '',
     currency: ['NEO', 'NeoGas'],
     sum: 0,
     neoAsset: "",

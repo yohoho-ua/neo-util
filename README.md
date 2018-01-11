@@ -1,6 +1,6 @@
-# neo-util
+# neo-util created for research and study purpose
 Test app for sending NEO and GAS    
-![alt text](https://i.imgur.com/8kIFvVp.png "Kartinochka")
+![alt text](https://i.imgur.com/ibJDpPR.png "Kartinochka")
 
 
 Running rpc client with open wallet required. Use neo-cli

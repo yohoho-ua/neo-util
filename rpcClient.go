@@ -7,6 +7,12 @@ import (
 	"net/http"
 )
 
+const (
+	accountAddress = "AcuhtcyXqRuwao2ayvqLVuQqh8YY34mor1"
+)
+
+	
+
 type (
 	// String represents the JSON schema of a response from a NEO node, where the expected
 	// result is a string.
@@ -53,7 +59,7 @@ type (
 
 
 func getInfo() (string, string){
-	responseBlob, _ := http.Get("http://localhost:20332?jsonrpc=2.0&method=getaccountstate&params=['AcuhtcyXqRuwao2ayvqLVuQqh8YY34mor1']&id=1")
+	responseBlob, _ := http.Get("http://localhost:20332?jsonrpc=2.0&method=getaccountstate&params=['"+accountAddress+"']&id=1")
 	buf, _ := ioutil.ReadAll(responseBlob.Body)
 	
 		type Balance struct {
