@@ -5,7 +5,7 @@ Test app for sending NEO and GAS
 
 Running rpc client with open wallet required. Use neo-cli
 ```dotnet neo-cli.dll /rpc
-   open wallet <path_to_waallet>
+   open wallet <path_to_wallet>
 ```  
 * enter your pass
 
