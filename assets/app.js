@@ -49,9 +49,9 @@ new Vue ({
                 fetch("/neo")
                 .then(response => response.json())
                 .then(json => {
-                console.log(json.neo, json.gas);
-                this.neoAsset = json.neo;
-                this.gasAsset = json.gas;
+                console.log(json[0], json[1]);
+                this.neoAsset = json[0];
+                this.gasAsset = json[1];
                 })
               },
 

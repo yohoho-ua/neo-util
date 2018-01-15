@@ -2,8 +2,8 @@ package main
 
 import (
 	//"fmt"
-	"net/http"
 	"github.com/gorilla/mux"
+	"net/http"
 )
 
 func newRouter() *mux.Router {

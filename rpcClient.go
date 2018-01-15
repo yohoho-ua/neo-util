@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"log"
+	"net/http"
 	"net/url"
-	"strings"
 	"os"
+	"strings"
 )
 
 const (
@@ -19,87 +19,70 @@ const (
 
 //from config.json
 type Configuration struct {
-    AccountAddress   string
-    Host   string
+	AccountAddress string
+	Host           string
 }
 
-	
 
-type (
-	NeoJSON struct {
-		ID      int    `json:"id"`
-		JSONRPC string `json:"jsonrpc"`
-		Result  int `json:"result"`
+
+//returns current NEO and GAS balances
+func GetInfo() []Balance {
+
+	configuration := initConfig()
+
+	//build url
+	u, err := url.Parse(configuration.Host)
+	if err != nil {
+		log.Fatal(err)
 	}
-)
 
-type (
-	AccountMap struct {
-		ID      int                    `json:"id"`
-		JSONRPC string                 `json:"jsonrpc"`
-		Result  map[string]interface{} `json:"result"`
-	}
-)
+	paramsString := []string{"['", configuration.AccountAddress, "']"}
+	params := strings.Join(paramsString, "")
 
-//returns current NEO and GAS balances 
-func GetInfo() (string, string){
+	//u.Scheme = "http"
+	//u.Host = "localhost:20332"
+	q := u.Query()
+	q.Set("jsonrpc", "2")
+	q.Set("method", "getaccountstate")
+	q.Set("id", "1")
+	q.Set("params", params)
+	u.RawQuery = q.Encode()
 
-		configuration := initConfig()
-	
-		//build url
-		u, err := url.Parse(configuration.Host)
-		if err != nil {
-			log.Fatal(err)
-		}
-		
-		paramsString  := []string{"['", configuration.AccountAddress, "']"}
-		params := strings.Join(paramsString, "")
-		
-		//u.Scheme = "http"
-		//u.Host = "localhost:20332"
-		q := u.Query()
-		q.Set("jsonrpc", "2")
-		q.Set("method", "getaccountstate")
-		q.Set("id", "1")
-		q.Set("params", params)
-		u.RawQuery = q.Encode()
-		fmt.Println(u)
+	//urlString := fmt.Sprint("http://localhost:20332?jsonrpc=2.0&method=getaccountstate&params=['%v']&id=1", configuration.AccountAddress)
 
-		//urlString := fmt.Sprint("http://localhost:20332?jsonrpc=2.0&method=getaccountstate&params=['%v']&id=1", configuration.AccountAddress)
-		
-		responseBlob, _ := http.Get(u.String())
+	responseBlob, _ := http.Get(u.String())
 
-	
+	//
+	fmt.Println(u.String())
+
 	// responseBlob, _ := http.Get("http://localhost:20332?jsonrpc=2.0&method=getaccountstate&params=['"+accountAddress+"']&id=1")
 	buf, _ := ioutil.ReadAll(responseBlob.Body)
-	
-		type Balance struct {
-			Asset  string `json:"asset"`
-			Value string `json:"value"`
-		}
 
-		type Result struct {
-			Balances []Balance `json:"balances"`
-		}
+	type Result struct {
+		Balances []Balance `json:"balances"`
+	}
 
-		type Response struct {
-			Result Result `json:"result"`
-		}
-	
-		var response Response
+	type Response struct {
+		Result Result `json:"result"`
+	}
 
-	
-	error :=json.Unmarshal(buf, &response)
+	var response Response
+
+	error := json.Unmarshal(buf, &response)
 	if err != nil {
 		fmt.Println("error:", error)
 	}
-	
+	//fmt.Println(response)
+
 	//return Neo and Gas amount
-	return response.Result.Balances[0].Value, response.Result.Balances[1].Value
+
+	return response.Result.Balances
 }
 
 //form and send API request to NEO node, transfer assets
 func Send(transaction Transaction) {
+	configuration := initConfig()
+
 	//select between NEO and GAS ids
 	assetType := ""
 	switch at := transaction.AssetType; at {
@@ -112,14 +95,14 @@ func Send(transaction Transaction) {
 	}
 
 	//build url
-	u, err := url.Parse("http://localhost:20332")
+	u, err := url.Parse(configuration.Host)
 	if err != nil {
 		log.Fatal(err)
 	}
-	
-	paramsString  := []string{"['", assetType, "',", transaction.Destination, "',", transaction.Amount, "]"}
+
+	paramsString := []string{"['", assetType, "',", transaction.Destination, "',", transaction.Amount, "]"}
 	params := strings.Join(paramsString, "")
-	
+
 	//u.Scheme = "http"
 	//u.Host = "localhost:20332"
 	q := u.Query()
@@ -129,26 +112,26 @@ func Send(transaction Transaction) {
 	q.Set("params", params)
 	u.RawQuery = q.Encode()
 	fmt.Println(u)
-	
+
 	// rtcpRequest :="http://localhost:20332?jsonrpc=2.0&method=sendtoaddress&params=['"+assetType+"','"+transaction.Destination+"',"+transaction.Amount+"]&id=1"
-	
+
 	response, _ := http.Get(u.String())
-	
+
 	// for tests
 	buf, _ := ioutil.ReadAll(response.Body)
-	// Unmarshall to map 
+	// Unmarshall to map
 	mapConfig := make(map[string]interface{})
 	json.Unmarshal(buf, &mapConfig)
 	fmt.Printf("%+v\n", mapConfig["result"])
 }
 
-	func initConfig() *Configuration {
+func initConfig() *Configuration {
 	file, _ := os.Open("conf.json")
 	decoder := json.NewDecoder(file)
 	configuration := Configuration{}
 	err := decoder.Decode(&configuration)
 	if err != nil {
-	  fmt.Println("error:", err)
+		fmt.Println("error:", err)
 	}
 	return &configuration
-	}
+}
