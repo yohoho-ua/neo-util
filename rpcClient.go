@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"log"
+	"net/url"
+	"strings"
 )
 
 const (
@@ -34,7 +36,27 @@ type (
 
 
 func GetInfo() (string, string){
-	responseBlob, _ := http.Get("http://localhost:20332?jsonrpc=2.0&method=getaccountstate&params=['"+accountAddress+"']&id=1")
+		//build url
+		u, err := url.Parse("http://localhost:20332")
+		if err != nil {
+			log.Fatal(err)
+		}
+		
+		paramsString  := []string{"['", accountAddress, "']"}
+		params := strings.Join(paramsString, "")
+		
+		//u.Scheme = "http"
+		//u.Host = "localhost:20332"
+		q := u.Query()
+		q.Set("jsonrpc", "2")
+		q.Set("method", "getaccountstate")
+		q.Set("id", "1")
+		q.Set("params", params)
+		u.RawQuery = q.Encode()
+		fmt.Println(u)
+		responseBlob, _ := http.Get(u.String())
+	
+	// responseBlob, _ := http.Get("http://localhost:20332?jsonrpc=2.0&method=getaccountstate&params=['"+accountAddress+"']&id=1")
 	buf, _ := ioutil.ReadAll(responseBlob.Body)
 	
 		type Balance struct {
@@ -53,9 +75,9 @@ func GetInfo() (string, string){
 		var response Response
 
 	
-	err :=json.Unmarshal(buf, &response)
+	error :=json.Unmarshal(buf, &response)
 	if err != nil {
-		fmt.Println("error:", err)
+		fmt.Println("error:", error)
 	}
 	
 	//return Neo and Gas amount
@@ -74,13 +96,31 @@ func Send(transaction Transaction) {
 	default:
 		log.Fatal("error: asset type is unidentified")
 	}
+
+	//build url
+	u, err := url.Parse("http://localhost:20332")
+	if err != nil {
+		log.Fatal(err)
+	}
 	
-	rtcpRequest :="http://localhost:20332?jsonrpc=2.0&method=sendtoaddress&params=['"+assetType+"','"+transaction.Destination+"',"+transaction.Amount+"]&id=1"
+	paramsString  := []string{"['", assetType, "',", transaction.Destination, "',", transaction.Amount, "]"}
+	params := strings.Join(paramsString, "")
 	
+	//u.Scheme = "http"
+	//u.Host = "localhost:20332"
+	q := u.Query()
+	q.Set("jsonrpc", "2")
+	q.Set("method", "sendtoaddress")
+	q.Set("id", "1")
+	q.Set("params", params)
+	u.RawQuery = q.Encode()
+	fmt.Println(u)
+	
+	// rtcpRequest :="http://localhost:20332?jsonrpc=2.0&method=sendtoaddress&params=['"+assetType+"','"+transaction.Destination+"',"+transaction.Amount+"]&id=1"
+	
+	response, _ := http.Get(u.String())
 	
 	// for tests
-	fmt.Println(rtcpRequest+"\n")
-	response, _ := http.Get(rtcpRequest)
 	buf, _ := ioutil.ReadAll(response.Body)
 	// Unmarshall to map 
 	mapConfig := make(map[string]interface{})
