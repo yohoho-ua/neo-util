@@ -8,13 +8,20 @@ import (
 	"log"
 	"net/url"
 	"strings"
+	"os"
 )
 
 const (
-	accountAddress = "AcuhtcyXqRuwao2ayvqLVuQqh8YY34mor1"
+	//accountAddress = "AcuhtcyXqRuwao2ayvqLVuQqh8YY34mor1"
 	assetTypeNEO = "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b"
 	assetTypeGAS = "602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7"
 )
+
+//from config.json
+type Configuration struct {
+    AccountAddress   string
+    Host   string
+}
 
 	
 
@@ -34,15 +41,18 @@ type (
 	}
 )
 
-
+//returns current NEO and GAS balances 
 func GetInfo() (string, string){
+
+		configuration := initConfig()
+	
 		//build url
 		u, err := url.Parse("http://localhost:20332")
 		if err != nil {
 			log.Fatal(err)
 		}
 		
-		paramsString  := []string{"['", accountAddress, "']"}
+		paramsString  := []string{"['", configuration.AccountAddress, "']"}
 		params := strings.Join(paramsString, "")
 		
 		//u.Scheme = "http"
@@ -84,7 +94,7 @@ func GetInfo() (string, string){
 	return response.Result.Balances[0].Value, response.Result.Balances[1].Value
 }
 
-
+//form and send API request to NEO node, transfer assets
 func Send(transaction Transaction) {
 	//select between NEO and GAS ids
 	assetType := ""
@@ -127,3 +137,14 @@ func Send(transaction Transaction) {
 	json.Unmarshal(buf, &mapConfig)
 	fmt.Printf("%+v\n", mapConfig["result"])
 }
+
+	func initConfig() *Configuration {
+	file, _ := os.Open("conf.json")
+	decoder := json.NewDecoder(file)
+	configuration := Configuration{}
+	err := decoder.Decode(&configuration)
+	if err != nil {
+	  fmt.Println("error:", err)
+	}
+	return &configuration
+	}
