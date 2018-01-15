@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"log"
 )
 
 const (
 	accountAddress = "AcuhtcyXqRuwao2ayvqLVuQqh8YY34mor1"
+	assetTypeNEO = "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b"
+	assetTypeGAS = "602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7"
 )
 
 	
@@ -62,10 +65,16 @@ func GetInfo() (string, string){
 
 func Send(transaction Transaction) {
 	//select between NEO and GAS ids
-	assetType := "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b" //NEO
-	if transaction.AssetType != "NEO" {
-		assetType = "602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7" //GAS
-}	
+	assetType := ""
+	switch at := transaction.AssetType; at {
+	case "NEO":
+		assetType = assetTypeNEO
+	case "GAS":
+		assetType = assetTypeGAS
+	default:
+		log.Fatal("error: asset type is unidentified")
+	}
+	
 	rtcpRequest :="http://localhost:20332?jsonrpc=2.0&method=sendtoaddress&params=['"+assetType+"','"+transaction.Destination+"',"+transaction.Amount+"]&id=1"
 	
 	
