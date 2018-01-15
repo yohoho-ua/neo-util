@@ -9,7 +9,7 @@ Running rpc client with open wallet required. Use neo-cli
 ```  
 * enter your pass
 
-* edit rpcClient.go, line: 11  
+* edit conf.json for account address, and NEO-node rpc host  
 
 ```
 const (
@@ -17,4 +17,4 @@ const (
 )
 ```
 
-app is running on [http://localhost:8080/assets/](http://localhost:8080/assets/ "link to wallet")
+by default app is running on [http://localhost:8080/assets/](http://localhost:8080/assets/ "link to wallet")

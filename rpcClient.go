@@ -47,7 +47,7 @@ func GetInfo() (string, string){
 		configuration := initConfig()
 	
 		//build url
-		u, err := url.Parse("http://localhost:20332")
+		u, err := url.Parse(configuration.Host)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -64,7 +64,11 @@ func GetInfo() (string, string){
 		q.Set("params", params)
 		u.RawQuery = q.Encode()
 		fmt.Println(u)
+
+		//urlString := fmt.Sprint("http://localhost:20332?jsonrpc=2.0&method=getaccountstate&params=['%v']&id=1", configuration.AccountAddress)
+		
 		responseBlob, _ := http.Get(u.String())
+
 	
 	// responseBlob, _ := http.Get("http://localhost:20332?jsonrpc=2.0&method=getaccountstate&params=['"+accountAddress+"']&id=1")
 	buf, _ := ioutil.ReadAll(responseBlob.Body)

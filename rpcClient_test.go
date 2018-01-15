@@ -4,6 +4,16 @@ import (
 	"testing"
 )
 
+type MockSomething struct {
+	MockTest func() bool
+}
+func (ms MockSomething) Test () bool {
+	if ms.MockTest != nil {
+		return ms.MockTest()
+	}
+	return false
+}
+
 func TestGetInfo(t *testing.T) {
 	//check actual amounts before
 	expected1 := "109"
