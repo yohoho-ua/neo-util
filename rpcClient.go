@@ -30,7 +30,7 @@ type (
 )
 
 
-func getInfo() (string, string){
+func GetInfo() (string, string){
 	responseBlob, _ := http.Get("http://localhost:20332?jsonrpc=2.0&method=getaccountstate&params=['"+accountAddress+"']&id=1")
 	buf, _ := ioutil.ReadAll(responseBlob.Body)
 	
@@ -60,7 +60,7 @@ func getInfo() (string, string){
 }
 
 
-func send(transaction Transaction) {
+func Send(transaction Transaction) {
 	//select between NEO and GAS ids
 	assetType := "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b" //NEO
 	if transaction.AssetType != "NEO" {

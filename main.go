@@ -12,8 +12,8 @@ func newRouter() *mux.Router {
 	staticFileHandler := http.StripPrefix("/assets/", http.FileServer(staticFileDirectory))
 	r.PathPrefix("/assets/").Handler(staticFileHandler).Methods("GET")
 
-	r.HandleFunc("/neo", getAccountInfoHandler).Methods("GET")
-	r.HandleFunc("/neo", transferHandler).Methods("POST")
+	r.HandleFunc("/neo", AccountInfoHandler).Methods("GET")
+	r.HandleFunc("/neo", TransferHandler).Methods("POST")
 	return r
 }
 

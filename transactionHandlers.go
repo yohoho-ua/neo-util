@@ -21,8 +21,8 @@ type Account struct {
 
 var Transactions []Transaction
 
-func getAccountInfoHandler(w http.ResponseWriter, r *http.Request) {
-	neoValue, gasValue := getInfo();
+func AccountInfoHandler(w http.ResponseWriter, r *http.Request) {
+	neoValue, gasValue := GetInfo();
 	account := Account{neoValue, gasValue}
 	AccountBytes, err := json.Marshal(account)
 
@@ -34,7 +34,7 @@ func getAccountInfoHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(AccountBytes)
 }
 
-func transferHandler(w http.ResponseWriter, r *http.Request) {
+func TransferHandler(w http.ResponseWriter, r *http.Request) {
 	Transaction := Transaction{}
 
 	err := r.ParseForm()
@@ -51,6 +51,6 @@ func transferHandler(w http.ResponseWriter, r *http.Request) {
 
 	Transactions = append(Transactions, Transaction)
 	fmt.Println(Transaction);
-	send(Transaction)
+	Send(Transaction)
 	http.Redirect(w, r, "/assets/", http.StatusFound)
 }

@@ -9,7 +9,7 @@ func TestGetInfo(t *testing.T) {
 	expected1 := "109"
 	expected2 := "957"
 
-	actual1, actual2 := getInfo()
+	actual1, actual2 := GetInfo()
 	
 	if actual1 != expected1 {
 		t.Errorf("getInfo returned unexpected NEO value: got %v want %v", actual1, expected1)
